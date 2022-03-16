@@ -83,7 +83,7 @@ object LinuxGen {
         ),
         //        new HazardSimplePlugin(false, true, false, true),
         //        new HazardSimplePlugin(false, false, false, false),
-        new MulSimplePlugin,
+        new MulPlugin,
         new MulDivIterativePlugin(
           genMul = false,
           genDiv = true,
