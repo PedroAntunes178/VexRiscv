@@ -35,7 +35,7 @@ object LinuxGen {
           prediction = DYNAMIC_TARGET,
           historyRamSizeLog2 = 10,
           compressedGen = true,
-          injectorStage = true,
+          injectorStage = false,
           config = InstructionCacheConfig(
             cacheSize = 4096*1,
             bytePerLine = 32,
@@ -56,9 +56,9 @@ object LinuxGen {
         ),
         //          ).newTightlyCoupledPort(TightlyCoupledPortParameter("iBusTc", a => a(30 downto 28) === 0x0 && a(5))),
         new DBusCachedPlugin(
-          dBusCmdMasterPipe = true,
-          dBusCmdSlavePipe = true,
-          dBusRspSlavePipe = true,
+          //dBusCmdMasterPipe = true,
+          //dBusCmdSlavePipe = true,
+          //dBusRspSlavePipe = true,
           config = new DataCacheConfig(
             cacheSize         = 4096*1,
             bytePerLine       = 32,
@@ -112,9 +112,9 @@ object LinuxGen {
           genMul = false,
           genDiv = true,
           mulUnrollFactor = 32,
-          divUnrollFactor = 16
+          divUnrollFactor = 32
         ),
-        new CsrPlugin(CsrPluginConfig.linuxFull(0x10000020l).copy(ebreakGen = false)),
+        new CsrPlugin(CsrPluginConfig.linuxFull(0x08000020l).copy(ebreakGen = false)),
         new DebugPlugin(ClockDomain.current.clone(reset = Bool().setName("debugReset"))),
         new BranchPlugin(
           earlyBranch = false,
@@ -167,7 +167,7 @@ object LinuxSyntesisBench extends App{
   ) ++ AlteraStdTargets(
     quartusCycloneIVPath = "/media/miaou/HD/linux/intelFPGA_lite/18.1/quartus/bin",
     quartusCycloneVPath  = "/media/miaou/HD/linux/intelFPGA_lite/18.1/quartus/bin"
-  ) 
+  )
 
   Bench(rtls, targets, "/media/miaou/HD/linux/tmp")
 }
