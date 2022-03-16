@@ -32,7 +32,7 @@ object LinuxGen {
       plugins = List(
         new IBusCachedPlugin(
           resetVector = 0x80000000l,
-          compressedGen = true,
+          compressedGen = false,
           prediction = STATIC,
           injectorStage = false,
           config = InstructionCacheConfig(
@@ -97,7 +97,6 @@ object LinuxGen {
           separatedAddSub = false
         ),
         new FullBarrelShifterPlugin(earlyInjection = false),
-        //        new LightShifterPlugin,
         new HazardSimplePlugin(
           bypassExecute           = true,
           bypassMemory            = true,
@@ -107,8 +106,6 @@ object LinuxGen {
           pessimisticWriteRegFile = false,
           pessimisticAddressMatch = false
         ),
-        //        new HazardSimplePlugin(false, true, false, true),
-        //        new HazardSimplePlugin(false, false, false, false),
         new MulPlugin,
         new MulDivIterativePlugin(
           genMul = false,
