@@ -31,10 +31,11 @@ object LinuxGen {
     val config = VexRiscvConfig(
       plugins = List(
         new IBusCachedPlugin(
-          resetVector = 0x80000000l,
-          compressedGen = false,
-          prediction = STATIC,
-          injectorStage = false,
+          resetVector = 0x00000000l,
+          prediction = DYNAMIC_TARGET,
+          historyRamSizeLog2 = 10,
+          compressedGen = true,
+          injectorStage = true,
           config = InstructionCacheConfig(
             cacheSize = 4096*1,
             bytePerLine = 32,
