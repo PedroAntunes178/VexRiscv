@@ -47,7 +47,7 @@ object LinuxGen {
             catchAccessFault = true,
             asyncTagMemory = false,
             twoCycleRam = false,
-            twoCycleCache = true
+            twoCycleCache = false
 //          )
           ),
           memoryTranslatorPortConfig = withMmu generate MmuPortConfig(
@@ -161,16 +161,13 @@ object LinuxSyntesisBench extends App{
   }
 
   val rtls = List(withoutMmu,withMmu)
-  //    val rtls = List(smallestNoCsr, smallest, smallAndProductive, smallAndProductiveWithICache)
-  //      val rtls = List(smallAndProductive, smallAndProductiveWithICache, fullNoMmuMaxPerf, fullNoMmu, full)
-  //    val rtls = List(fullNoMmu)
 
   val targets = XilinxStdTargets(
     vivadoArtix7Path = "/media/miaou/HD/linux/Xilinx/Vivado/2018.3/bin"
   ) ++ AlteraStdTargets(
     quartusCycloneIVPath = "/media/miaou/HD/linux/intelFPGA_lite/18.1/quartus/bin",
     quartusCycloneVPath  = "/media/miaou/HD/linux/intelFPGA_lite/18.1/quartus/bin"
-  ) //++  IcestormStdTargets().take(1)
+  ) 
 
   Bench(rtls, targets, "/media/miaou/HD/linux/tmp")
 }
@@ -179,47 +176,17 @@ object LinuxSim extends App{
   import spinal.core.sim._
 
   SimConfig.allOptimisation.compile(new VexRiscv(LinuxGen.configFull(litex = false, withMmu = true))).doSim{dut =>
-//    dut.clockDomain.forkStimulus(10)
-//    dut.clockDomain.forkSimSpeedPrinter()
-//    dut.plugins.foreach{
-//      case p : IBusSimplePlugin => dut.clockDomain.onRisingEdges{
-//        p.iBus.cmd.ready #= ! p.iBus.cmd.ready.toBoolean
-////        p.iBus.rsp.valid.randomize()
-////        p.iBus.rsp.inst.randomize()
-////        p.iBus.rsp.error.randomize()
-//      }
-//      case p : DBusSimplePlugin => dut.clockDomain.onRisingEdges{
-//          p.dBus.cmd.ready #= ! p.dBus.cmd.ready.toBoolean
-////        p.dBus.cmd.ready.randomize()
-////        p.dBus.rsp.ready.randomize()
-////        p.dBus.rsp.data.randomize()
-////        p.dBus.rsp.error.randomize()
-//      }
-//      case _ =>
-//    }
-//    sleep(10*10000000)
-
 
     var cycleCounter = 0l
     var lastTime = System.nanoTime()
-
-
-
 
     var iBus : IBusSimpleBus = null
     var dBus : DBusSimpleBus = null
     dut.plugins.foreach{
       case p : IBusSimplePlugin =>
         iBus = p.iBus
-//        p.iBus.rsp.valid.randomize()
-//        p.iBus.rsp.inst.randomize()
-//        p.iBus.rsp.error.randomize()
       case p : DBusSimplePlugin =>
         dBus = p.dBus
-//        p.dBus.cmd.ready.randomize()
-//        p.dBus.rsp.ready.randomize()
-//        p.dBus.rsp.data.randomize()
-//        p.dBus.rsp.error.randomize()
       case _ =>
     }
 
