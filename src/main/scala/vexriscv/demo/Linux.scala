@@ -32,7 +32,7 @@ object LinuxGen {
       plugins = List(
         new IBusCachedPlugin(
           resetVector = 0x80000000l,
-          compressedGen = false,
+          compressedGen = true,
           prediction = STATIC,
           injectorStage = false,
           config = InstructionCacheConfig(
