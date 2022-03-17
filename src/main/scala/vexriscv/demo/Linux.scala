@@ -53,12 +53,6 @@ object LinuxGen {
             portTlbSize = 4
           )
         ),
-        //          new MemoryTranslatorPlugin(
-        //            tlbSize = 32,
-        //            virtualRange = _(31 downto 28) === 0xC,
-        //            ioRange      = _(31 downto 28) === 0xF
-        //          ),
-
         new DecoderSimplePlugin(
           catchIllegalInstruction = true
         ),
