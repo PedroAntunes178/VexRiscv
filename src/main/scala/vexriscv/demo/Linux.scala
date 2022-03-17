@@ -34,7 +34,7 @@ object LinuxGen {
           resetVector = 0x00000000l,
           cmdForkOnSecondStage = false,
           cmdForkPersistence = false,
-          prediction = DYNAMIC_TARGET,
+          prediction = STATIC,
           historyRamSizeLog2 = 10,
           catchAccessFault = true,
           compressedGen = true,
@@ -68,10 +68,9 @@ object LinuxGen {
         ),
         new IntAluPlugin,
         new SrcPlugin(
-          separatedAddSub = false
+          separatedAddSub = true
         ),
         new FullBarrelShifterPlugin(earlyInjection = false),
-        //        new LightShifterPlugin,
         new HazardSimplePlugin(
           bypassExecute           = true,
           bypassMemory            = true,
@@ -81,17 +80,14 @@ object LinuxGen {
           pessimisticWriteRegFile = false,
           pessimisticAddressMatch = false
         ),
-        //        new HazardSimplePlugin(false, true, false, true),
-        //        new HazardSimplePlugin(false, false, false, false),
         new MulPlugin,
         new MulDivIterativePlugin(
           genMul = false,
           genDiv = true,
           mulUnrollFactor = 32,
-          divUnrollFactor = 1
+          divUnrollFactor = 32
         ),
-        //new DivPlugin,
-        new CsrPlugin(CsrPluginConfig.linuxFull(0x80000020l).copy(ebreakGen = false)),
+        new CsrPlugin(CsrPluginConfig.linuxFull(0x08000020l).copy(ebreakGen = false)),
         new DebugPlugin(ClockDomain.current.clone(reset = Bool().setName("debugReset"))),
         new BranchPlugin(
           earlyBranch = false,
@@ -102,7 +98,7 @@ object LinuxGen {
       )
     )
     if(withMmu) config.plugins += new MmuPlugin(
-      ioRange = (x => if(litex) x(31 downto 28) === 0xB || x(31 downto 28) === 0xE || x(31 downto 28) === 0xF else x(31 downto 28) === 0xF)
+      ioRange = (x => if(litex) x(31 downto 31) === 0x1 else x(31 downto 28) === 0xF)
     ) else {
       config.plugins += new StaticMemoryTranslatorPlugin(
         ioRange      = _(31 downto 28) === 0xF
@@ -110,7 +106,6 @@ object LinuxGen {
     }
     config
   }
-
 
 
   def main(args: Array[String]) {
@@ -139,16 +134,13 @@ object LinuxSyntesisBench extends App{
   }
 
   val rtls = List(withoutMmu,withMmu)
-  //    val rtls = List(smallestNoCsr, smallest, smallAndProductive, smallAndProductiveWithICache)
-  //      val rtls = List(smallAndProductive, smallAndProductiveWithICache, fullNoMmuMaxPerf, fullNoMmu, full)
-  //    val rtls = List(fullNoMmu)
 
   val targets = XilinxStdTargets(
     vivadoArtix7Path = "/media/miaou/HD/linux/Xilinx/Vivado/2018.3/bin"
   ) ++ AlteraStdTargets(
     quartusCycloneIVPath = "/media/miaou/HD/linux/intelFPGA_lite/18.1/quartus/bin",
     quartusCycloneVPath  = "/media/miaou/HD/linux/intelFPGA_lite/18.1/quartus/bin"
-  ) //++  IcestormStdTargets().take(1)
+  )
 
   Bench(rtls, targets, "/media/miaou/HD/linux/tmp")
 }
@@ -157,47 +149,16 @@ object LinuxSim extends App{
   import spinal.core.sim._
 
   SimConfig.allOptimisation.compile(new VexRiscv(LinuxGen.configFull(litex = false, withMmu = true))).doSim{dut =>
-//    dut.clockDomain.forkStimulus(10)
-//    dut.clockDomain.forkSimSpeedPrinter()
-//    dut.plugins.foreach{
-//      case p : IBusSimplePlugin => dut.clockDomain.onRisingEdges{
-//        p.iBus.cmd.ready #= ! p.iBus.cmd.ready.toBoolean
-////        p.iBus.rsp.valid.randomize()
-////        p.iBus.rsp.inst.randomize()
-////        p.iBus.rsp.error.randomize()
-//      }
-//      case p : DBusSimplePlugin => dut.clockDomain.onRisingEdges{
-//          p.dBus.cmd.ready #= ! p.dBus.cmd.ready.toBoolean
-////        p.dBus.cmd.ready.randomize()
-////        p.dBus.rsp.ready.randomize()
-////        p.dBus.rsp.data.randomize()
-////        p.dBus.rsp.error.randomize()
-//      }
-//      case _ =>
-//    }
-//    sleep(10*10000000)
-
-
     var cycleCounter = 0l
     var lastTime = System.nanoTime()
-
-
-
 
     var iBus : IBusSimpleBus = null
     var dBus : DBusSimpleBus = null
     dut.plugins.foreach{
       case p : IBusSimplePlugin =>
         iBus = p.iBus
-//        p.iBus.rsp.valid.randomize()
-//        p.iBus.rsp.inst.randomize()
-//        p.iBus.rsp.error.randomize()
       case p : DBusSimplePlugin =>
         dBus = p.dBus
-//        p.dBus.cmd.ready.randomize()
-//        p.dBus.rsp.ready.randomize()
-//        p.dBus.rsp.data.randomize()
-//        p.dBus.rsp.error.randomize()
       case _ =>
     }
 
