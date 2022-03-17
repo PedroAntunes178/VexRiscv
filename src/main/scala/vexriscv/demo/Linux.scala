@@ -32,60 +32,50 @@ object LinuxGen {
       plugins = List(
         new IBusCachedPlugin(
           resetVector = 0x00000000l,
-          prediction = DYNAMIC_TARGET,
+          prediction = STATIC,
           historyRamSizeLog2 = 10,
           compressedGen = true,
-          injectorStage = false,
+          injectorStage = true,
           config = InstructionCacheConfig(
             cacheSize = 4096*1,
-            bytePerLine = 32,
+            bytePerLine = 4,
             wayCount = 1,
             addressWidth = 32,
             cpuDataWidth = 32,
             memDataWidth = 32,
             catchIllegalAccess = true,
-            catchAccessFault = true,
+            catchAccessFault = false,
             asyncTagMemory = false,
             twoCycleRam = false,
             twoCycleCache = false
-//          )
           ),
           memoryTranslatorPortConfig = withMmu generate MmuPortConfig(
             portTlbSize = 4
           )
         ),
-        //          ).newTightlyCoupledPort(TightlyCoupledPortParameter("iBusTc", a => a(30 downto 28) === 0x0 && a(5))),
         new DBusCachedPlugin(
           //dBusCmdMasterPipe = true,
           //dBusCmdSlavePipe = true,
           //dBusRspSlavePipe = true,
           config = new DataCacheConfig(
             cacheSize         = 4096*1,
-            bytePerLine       = 32,
+            bytePerLine       = 4,
             wayCount          = 1,
             addressWidth      = 32,
             cpuDataWidth      = 32,
             memDataWidth      = 32,
-            catchAccessError  = true,
+            catchAccessError  = false,
             catchIllegal      = true,
             catchUnaligned    = true,
             withExclusive = withSmp,
             withInvalidate = withSmp,
-            withLrSc = true,
-            withAmo = true
-//          )
+            withLrSc = false,
+            withAmo = false
           ),
           memoryTranslatorPortConfig = withMmu generate MmuPortConfig(
             portTlbSize = 4
           )
         ),
-
-        //          new MemoryTranslatorPlugin(
-        //            tlbSize = 32,
-        //            virtualRange = _(31 downto 28) === 0xC,
-        //            ioRange      = _(31 downto 28) === 0xF
-        //          ),
-
         new DecoderSimplePlugin(
           catchIllegalInstruction = true
         ),
@@ -95,7 +85,7 @@ object LinuxGen {
         ),
         new IntAluPlugin,
         new SrcPlugin(
-          separatedAddSub = false
+          separatedAddSub = true
         ),
         new FullBarrelShifterPlugin(earlyInjection = false),
         new HazardSimplePlugin(
@@ -107,9 +97,8 @@ object LinuxGen {
           pessimisticWriteRegFile = false,
           pessimisticAddressMatch = false
         ),
-        new MulPlugin,
         new MulDivIterativePlugin(
-          genMul = false,
+          genMul = true,
           genDiv = true,
           mulUnrollFactor = 32,
           divUnrollFactor = 32
@@ -125,7 +114,7 @@ object LinuxGen {
       )
     )
     if(withMmu) config.plugins += new MmuPlugin(
-      ioRange = (x => if(litex) x(31 downto 28) === 0xB || x(31 downto 28) === 0xE || x(31 downto 28) === 0xF || x(31 downto 28) === 0x8 else x(31 downto 28) === 0xF)
+      ioRange = (x => if(litex) x(31 downto 31) === 0x1 else x(31 downto 28) === 0xF)
     ) else {
       config.plugins += new StaticMemoryTranslatorPlugin(
         ioRange      = _(31 downto 28) === 0xF
