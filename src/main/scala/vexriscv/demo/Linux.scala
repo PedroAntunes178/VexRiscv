@@ -69,8 +69,8 @@ object LinuxGen {
             catchUnaligned    = true,
             withExclusive = withSmp,
             withInvalidate = withSmp,
-            withLrSc = false,
-            withAmo = false
+            withLrSc = true,
+            withAmo = true
           ),
           memoryTranslatorPortConfig = withMmu generate MmuPortConfig(
             portTlbSize = 4
