@@ -80,9 +80,8 @@ object LinuxGen {
           pessimisticWriteRegFile = false,
           pessimisticAddressMatch = false
         ),
-        new MulPlugin,
         new MulDivIterativePlugin(
-          genMul = false,
+          genMul = true,
           genDiv = true,
           mulUnrollFactor = 32,
           divUnrollFactor = 32
