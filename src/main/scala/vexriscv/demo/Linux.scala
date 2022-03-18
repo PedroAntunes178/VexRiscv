@@ -44,10 +44,10 @@ object LinuxGen {
             cpuDataWidth = 32,
             memDataWidth = 32,
             catchIllegalAccess = true,
-            catchAccessFault = false,
+            catchAccessFault = true,
             asyncTagMemory = false,
             twoCycleRam = false,
-            twoCycleCache = false
+            twoCycleCache = true
           ),
           memoryTranslatorPortConfig = withMmu generate MmuPortConfig(
             portTlbSize = 4
