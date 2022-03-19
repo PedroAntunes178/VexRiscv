@@ -97,11 +97,12 @@ object LinuxGen {
           pessimisticWriteRegFile = false,
           pessimisticAddressMatch = false
         ),
+        new MulPlugin,
         new MulDivIterativePlugin(
-          genMul = true,
+          genMul = false,
           genDiv = true,
           mulUnrollFactor = 32,
-          divUnrollFactor = 32
+          divUnrollFactor = 4
         ),
         new CsrPlugin(CsrPluginConfig.linuxFull(0x08000020l).copy(ebreakGen = false)),
         new DebugPlugin(ClockDomain.current.clone(reset = Bool().setName("debugReset"))),
