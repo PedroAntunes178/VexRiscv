@@ -64,7 +64,7 @@ object LinuxGen {
             addressWidth      = 32,
             cpuDataWidth      = 32,
             memDataWidth      = 32,
-            catchAccessError  = false,
+            catchAccessError  = true,
             catchIllegal      = true,
             catchUnaligned    = true,
             withExclusive = withSmp,
