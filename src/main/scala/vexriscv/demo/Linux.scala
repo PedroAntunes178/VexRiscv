@@ -74,11 +74,12 @@ object LinuxGen {
           pessimisticWriteRegFile = false,
           pessimisticAddressMatch = false
         ),
+        new MulPlugin,
         new MulDivIterativePlugin(
-          genMul = true,
+          genMul = false,
           genDiv = true,
           mulUnrollFactor = 32,
-          divUnrollFactor = 32
+          divUnrollFactor = 4
         ),
         new CsrPlugin(CsrPluginConfig.linuxFull(0x08000020l).copy(ebreakGen = false)),
         new DebugPlugin(ClockDomain.current.clone(reset = Bool().setName("debugReset"))),
@@ -91,7 +92,7 @@ object LinuxGen {
       )
     )
     if(withMmu) config.plugins += new MmuPlugin(
-      ioRange = (x => if(litex) x(31 downto 31) === 0x1 else x(31 downto 28) === 0xF)
+      ioRange = (x => if(litex) x(31 downto 31) === 0x1 | x(31 downto 30) === 0x1 else x(31 downto 28) === 0xF)
     ) else {
       config.plugins += new StaticMemoryTranslatorPlugin(
         ioRange      = _(31 downto 28) === 0xF
