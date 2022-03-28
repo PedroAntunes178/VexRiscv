@@ -92,7 +92,7 @@ object LinuxGen {
       )
     )
     if(withMmu) config.plugins += new MmuPlugin(
-      ioRange = (x => if(litex) x(31 downto 31) === 0x1 | x(31 downto 30) === 0x1 else x(31 downto 28) === 0xF)
+      ioRange = (x => if(iob_soc) x(31 downto 31) === 0x1 | x(31 downto 30) === 0x1 else x(31 downto 28) === 0xF)
     ) else {
       config.plugins += new StaticMemoryTranslatorPlugin(
         ioRange      = _(31 downto 28) === 0xF
