@@ -27,7 +27,7 @@ import vexriscv.ip._
 import vexriscv.plugin._
 
 object LinuxGen {
-  def configFull(litex : Boolean, withMmu : Boolean, withSmp : Boolean = false) = {
+  def configFull(iob_soc : Boolean, withMmu : Boolean, withSmp : Boolean = false) = {
     val config = VexRiscvConfig(
       plugins = List(
         new IBusSimplePlugin(
@@ -105,7 +105,7 @@ object LinuxGen {
   def main(args: Array[String]) {
     SpinalConfig(mergeAsyncProcess = false, anonymSignalPrefix = "_zz").generateVerilog {
       val toplevel = new VexRiscv(configFull(
-        litex = !args.contains("-r"),
+        iob_soc = !args.contains("-r"),
         withMmu = true
       ))
       toplevel
@@ -118,13 +118,13 @@ object LinuxSyntesisBench extends App{
   val withoutMmu = new Rtl {
     override def getName(): String = "VexRiscv Without Mmu"
     override def getRtlPath(): String = "VexRiscvWithoutMmu.v"
-    SpinalConfig(inlineRom=true).generateVerilog(new VexRiscv(LinuxGen.configFull(litex = false, withMmu = false)).setDefinitionName(getRtlPath().split("\\.").head))
+    SpinalConfig(inlineRom=true).generateVerilog(new VexRiscv(LinuxGen.configFull(iob_soc = false, withMmu = false)).setDefinitionName(getRtlPath().split("\\.").head))
   }
 
   val withMmu = new Rtl {
     override def getName(): String = "VexRiscv With Mmu"
     override def getRtlPath(): String = "VexRiscvWithMmu.v"
-    SpinalConfig(inlineRom=true).generateVerilog(new VexRiscv(LinuxGen.configFull(litex = false, withMmu = true)).setDefinitionName(getRtlPath().split("\\.").head))
+    SpinalConfig(inlineRom=true).generateVerilog(new VexRiscv(LinuxGen.configFull(iob_soc = false, withMmu = true)).setDefinitionName(getRtlPath().split("\\.").head))
   }
 
   val rtls = List(withoutMmu,withMmu)
@@ -142,7 +142,7 @@ object LinuxSyntesisBench extends App{
 object LinuxSim extends App{
   import spinal.core.sim._
 
-  SimConfig.allOptimisation.compile(new VexRiscv(LinuxGen.configFull(litex = false, withMmu = true))).doSim{dut =>
+  SimConfig.allOptimisation.compile(new VexRiscv(LinuxGen.configFull(iob_soc = false, withMmu = true))).doSim{dut =>
     var cycleCounter = 0l
     var lastTime = System.nanoTime()
 
