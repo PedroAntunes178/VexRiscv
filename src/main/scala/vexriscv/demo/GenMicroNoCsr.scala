@@ -17,7 +17,7 @@ object GenMicroNoCsr extends App{
           resetVector = 0x00000000l,
           cmdForkOnSecondStage = false,
           cmdForkPersistence = false,
-          prediction = NONE,
+          prediction = STATIC,
           catchAccessFault = false,
           compressedGen = true
         ),
@@ -41,10 +41,10 @@ object GenMicroNoCsr extends App{
         ),
         new LightShifterPlugin,
         new HazardSimplePlugin(
-          bypassExecute           = false,
-          bypassMemory            = false,
-          bypassWriteBack         = false,
-          bypassWriteBackBuffer   = false,
+          bypassExecute           = true,
+          bypassMemory            = true,
+          bypassWriteBack         = true,
+          bypassWriteBackBuffer   = true,
           pessimisticUseSrc       = false,
           pessimisticWriteRegFile = false,
           pessimisticAddressMatch = false
