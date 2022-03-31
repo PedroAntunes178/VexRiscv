@@ -19,7 +19,7 @@ object GenMicroNoCsr extends App{
           cmdForkPersistence = false,
           prediction = NONE,
           catchAccessFault = false,
-          compressedGen = false
+          compressedGen = true
         ),
         new DBusSimplePlugin(
           catchAddressMisaligned = false,
@@ -39,6 +39,8 @@ object GenMicroNoCsr extends App{
           separatedAddSub = false,
           executeInsertion = false
         ),
+        new MulPlugin,
+        new DivPlugin,
         new LightShifterPlugin,
         new HazardSimplePlugin(
           bypassExecute           = false,
