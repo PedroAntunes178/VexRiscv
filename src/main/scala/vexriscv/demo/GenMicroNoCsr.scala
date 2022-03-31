@@ -14,7 +14,7 @@ object GenMicroNoCsr extends App{
       withWriteBackStage = false,
       plugins = List(
         new IBusSimplePlugin(
-          resetVector = 0x80000000l,
+          resetVector = 0x00000000l,
           cmdForkOnSecondStage = false,
           cmdForkPersistence = false,
           prediction = NONE,
@@ -39,8 +39,6 @@ object GenMicroNoCsr extends App{
           separatedAddSub = false,
           executeInsertion = false
         ),
-        new MulPlugin,
-        new DivPlugin,
         new LightShifterPlugin,
         new HazardSimplePlugin(
           bypassExecute           = false,
@@ -51,6 +49,7 @@ object GenMicroNoCsr extends App{
           pessimisticWriteRegFile = false,
           pessimisticAddressMatch = false
         ),
+        new MulSimplePlugin,
         new BranchPlugin(
           earlyBranch = true,
           catchAddressMisaligned = false
