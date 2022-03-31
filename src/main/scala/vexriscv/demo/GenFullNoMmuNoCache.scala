@@ -18,7 +18,7 @@ object GenFullNoMmuNoCache extends App{
           cmdForkPersistence = false,
           prediction = STATIC,
           catchAccessFault = false,
-          compressedGen = false
+          compressedGen = true
         ),
         new DBusSimplePlugin(
           catchAddressMisaligned = false,
