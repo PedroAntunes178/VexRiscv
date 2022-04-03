@@ -31,7 +31,7 @@ object LinuxGen {
     val config = VexRiscvConfig(
       plugins = List(
         new IBusSimplePlugin(
-          resetVector = 0x00000000l,
+          resetVector = 0x80000000l,
           cmdForkOnSecondStage = false,
           cmdForkPersistence = false,
           prediction = STATIC,
@@ -81,7 +81,7 @@ object LinuxGen {
           mulUnrollFactor = 32,
           divUnrollFactor = 4
         ),
-        new CsrPlugin(CsrPluginConfig.linuxFull(0x08000020l).copy(ebreakGen = false)),
+        new CsrPlugin(CsrPluginConfig.linuxFull(0x80000020l).copy(ebreakGen = false)),
         new DebugPlugin(ClockDomain.current.clone(reset = Bool().setName("debugReset"))),
         new BranchPlugin(
           earlyBranch = false,
