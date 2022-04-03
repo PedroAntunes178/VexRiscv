@@ -62,7 +62,7 @@ object LinuxGen {
         ),
         new IntAluPlugin,
         new SrcPlugin(
-          separatedAddSub = false
+          separatedAddSub = true
         ),
         new FullBarrelShifterPlugin(earlyInjection = false),
         new HazardSimplePlugin(
