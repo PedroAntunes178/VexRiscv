@@ -319,6 +319,10 @@ class DebugPlugin(var debugClockDomain : ClockDomain, hardwareBreakpointCount : 
       if(pipeline.config.withRvc){
         val cleanStep = RegNext(stepIt && decode.arbitration.isFiring) init(False)
         execute.arbitration.flushNext setWhen(cleanStep)
+        when(cleanStep){
+          execute.arbitration.flushNext := True
+          iBusFetcher.forceNoDecode()
+        }
       }
 
       io.resetOut := RegNext(resetIt)
@@ -336,6 +340,10 @@ class DebugPlugin(var debugClockDomain : ClockDomain, hardwareBreakpointCount : 
         }
         pipeline.plugins.foreach{
           case p : PrivilegeService => p.forceMachine()
+          case _ =>
+        }
+        pipeline.plugins.foreach{
+          case p : PredictionInterface => p.inDebugNoFetch()
           case _ =>
         }
         if(pipeline.things.contains(DEBUG_BYPASS_CACHE)) pipeline(DEBUG_BYPASS_CACHE) := True
